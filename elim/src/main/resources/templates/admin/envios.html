@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envíos — Elim Pijamas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/pedidos.css}">
+</head>
+<body class="pedidos-body">
+
+<aside class="sidebar">
+    <div>
+        <div class="brand">
+            <h2>Elim</h2>
+            <small>Pijamas</small>
+        </div>
+
+        <p class="nav-label">Principal</p>
+        <ul class="nav-menu">
+            <li>
+                <a th:href="@{/admin/dashboard}">
+                    <i class="fa-solid fa-gauge-high"></i> <span>Panel</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/agregar-pijama}">
+                    <i class="fa-solid fa-plus"></i> <span>Agregar Pijama</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/pedidos}">
+                    <i class="fa-solid fa-truck-fast"></i> <span>Pedidos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/envios}" class="active">
+                    <i class="fa-solid fa-shipping-fast"></i> <span>Envíos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/devoluciones}">
+                    <i class="fa-solid fa-rotate-left"></i> <span>Devoluciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/usuarios}">
+                    <i class="fa-solid fa-user-group"></i> <span>Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/reportes}">
+                    <i class="fa-solid fa-file-excel"></i> <span>Reportes</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="logout-section">
+        <a th:href="@{/logout}">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>Cerrar sesión</span>
+        </a>
+    </div>
+</aside>
+
+<div class="dashboard-container">
+    <div class="pedidos-shell">
+        <div class="dash-header">
+            <div>
+                <h1>Gestión de envíos</h1>
+                <span th:text="${pedidoId > 0} ? 'Envíos del pedido #' + ${pedidoId} : 'Revisa y actualiza el estado de los envíos registrados.'">
+                    Revisa y actualiza el estado de los envíos registrados.
+                </span>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/admin/pedidos}" class="btn-dash btn-primary">Volver a pedidos</a>
+            </div>
+        </div>
+
+        <section class="pedido-card" style="margin-bottom: 20px;" th:if="${pedidosForForm != null && !pedidosForForm.empty}">
+            <h2>Generar envío</h2>
+            <form class="form-pedido" th:action="@{/admin/crear-envio}" method="POST">
+                <label>
+                    Pedido
+                    <select name="id_pedido_fk" required>
+                        <option value="">Seleccione un pedido</option>
+                        <option th:each="p : ${pedidosForForm}"
+                                th:value="${p.idPedido}"
+                                th:text="'Pedido #' + ${p.idPedido}"
+                                th:selected="${pedidoId == p.idPedido}">
+                        </option>
+                    </select>
+                </label>
+                <label>
+                    Empresa de mensajería
+                    <input type="text" name="empresa_mensajeria" required placeholder="Ej. Servientrega">
+                </label>
+                <label>
+                    Número de guía
+                    <input type="text" name="numero_guia" required placeholder="Ingrese número de guía">
+                </label>
+                <label>
+                    Estado del envío
+                    <select name="estado_envio" required>
+                        <option value="En bodega">En bodega</option>
+                        <option value="En transito">En transito</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Devuelto">Devuelto</option>
+                    </select>
+                </label>
+                <button type="submit" class="btn-save">Generar envío</button>
+            </form>
+        </section>
+
+        <div class="alert alert-success" th:if="${success != null && !#strings.isEmpty(success)}" th:text="${success}"></div>
+        <div class="alert alert-error" th:if="${error != null && !#strings.isEmpty(error)}" th:text="${error}"></div>
+
+        <th:block th:if="${envios != null && !envios.empty}">
+            <th:block th:each="envio : ${envios}">
+                <section class="pedido-card" th:if="${envio.numero_guia != null && !#strings.isEmpty(envio.numero_guia)}">
+                    <div class="pedido-head">
+                        <div>
+                            <h3 th:text="'Envío #' + ${envio.id_envio} + ' · Pedido #' + ${envio.id_pedido_fk}">Envío #0 · Pedido #0</h3>
+                            <div class="pedido-meta" th:text="${envio.nombres != null ? envio.nombres + ' ' + envio.apellidos : 'Cliente no disponible'} + ' · ' + ${envio.correo != null ? envio.correo : 'Sin correo'}">
+                                Nombre · Correo
+                            </div>
+                        </div>
+
+                        <span class="badge badge-pendiente" th:if="${envio.estado_envio == 'En bodega'}" th:text="${envio.estado_envio}">En bodega</span>
+                        <span class="badge badge-enviado" th:if="${envio.estado_envio == 'En transito'}" th:text="${envio.estado_envio}">En transito</span>
+                        <span class="badge badge-entregado" th:if="${envio.estado_envio == 'Entregado'}" th:text="${envio.estado_envio}">Entregado</span>
+                        <span class="badge badge-devuelto" th:if="${envio.estado_envio == 'Devuelto'}" th:text="${envio.estado_envio}">Devuelto</span>
+                    </div>
+
+                    <div class="pedido-details">
+                        <div class="pedido-detail-box">
+                            <strong>Fecha de envío</strong>
+                            <span th:text="${envio.fecha_envio != null} ? ${envio.fecha_envio} : '-'">-</span>
+                        </div>
+                        <div class="pedido-detail-box">
+                            <strong>Empresa</strong>
+                            <span th:text="${envio.empresa_mensajeria != null} ? ${envio.empresa_mensajeria} : 'No asignado'">No asignado</span>
+                        </div>
+                        <div class="pedido-detail-box">
+                            <strong>Guía</strong>
+                            <span th:text="${envio.numero_guia != null} ? ${envio.numero_guia} : 'Sin guía'">Sin guía</span>
+                        </div>
+                        <div class="pedido-detail-box">
+                            <strong>Total pedido</strong>
+                            <span th:text="'$' + ${#numbers.formatDecimal(envio.total_pago, 0, 'POINT', 0, 'COMMA')}">$0</span>
+                        </div>
+                    </div>
+
+                    <form class="form-pedido" th:action="@{/admin/actualizar-envio}" method="POST">
+                        <input type="hidden" name="id_envio" th:value="${envio.id_envio}">
+                        <input type="hidden" name="id_pedido_fk" th:value="${envio.id_pedido_fk}">
+
+                        <label>
+                            Estado del envío
+                            <select name="estado_envio">
+                                <option value="En bodega" th:selected="${envio.estado_envio == 'En bodega'}">En bodega</option>
+                                <option value="En transito" th:selected="${envio.estado_envio == 'En transito'}">En transito</option>
+                                <option value="Entregado" th:selected="${envio.estado_envio == 'Entregado'}">Entregado</option>
+                                <option value="Devuelto" th:selected="${envio.estado_envio == 'Devuelto'}">Devuelto</option>
+                            </select>
+                        </label>
+                        <button type="submit" class="btn-save">Guardar cambios</button>
+                    </form>
+                </section>
+            </th:block>
+        </th:block>
+
+        <div class="empty-state" th:unless="${envios != null && !envios.empty}">
+            <h3>No hay envíos registrados</h3>
+            <p>Los datos de envío aparecerán aquí cuando se creen registros en la base de datos.</p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

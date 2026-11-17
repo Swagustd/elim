@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito de compras - Elim Pijamas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/categorias.css}">
+</head>
+<body class="catalogo-body">
+
+<!-- NAVBAR -->
+<nav class="main-navbar">
+    <div class="nav-logo">
+        <img th:src="@{/images/logo.jpg}" alt="Logo" class="logo-img-nav">
+        <div class="logo-text">
+            <span class="brand-title">elim</span>
+            <span class="brand-subtitle">pijamas</span>
+        </div>
+    </div>
+    <div class="nav-actions">
+        <a th:href="@{/index}" class="btn-nav-link">Volver al inicio</a>
+        <a th:href="@{/catalogo}" class="btn-nav-link">Seguir comprando</a>
+    </div>
+</nav>
+
+<!--contenedor principal -->
+<div class="catalogo-page">
+
+    <div class="catalogo-header">
+        <span class="section-tag">TU COMPRA</span>
+        <h1>Carrito de compras</h1>
+        <p>Revisa tus prendas seleccionadas y continúa con la compra.</p>
+    </div>
+
+    <!-- error -->
+    <div th:if="${param.error}" class="badge-estado badge-out" style="padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; display: block;">
+        <span th:text="${param.error}">Error en la solicitud</span>
+    </div>
+
+    <!-- si el carrito tiene pijamas -->
+    <div th:if="${items != null and !#lists.isEmpty(items)}" class="carrito-layout-grid">
+
+        <!-- columna izquierda sobre la info de productos comprados -->
+        <div class="carrito-items-list">
+            <div th:each="item : ${items}" class="producto-card carrito-item-card" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+
+                <!-- informacion del pijama -->
+                <div class="producto-info" style="padding: 0; flex-grow: 1;">
+                    <h3 th:text="${item.nombre}" style="margin-bottom: 6px;">Nombre del producto</h3>
+                    <p class="descripcion" style="margin-bottom: 4px;">
+                        <strong>Talla:</strong> <span th:text="${item.talla}">Única</span> |
+                        <strong>Cantidad:</strong> <span th:text="${item.cantidad}">1</span>
+                    </p>
+                    <div class="precio" th:text="${'$' + #numbers.formatInteger(item.subtotal, 0, 'POINT')}">$0</div>
+                </div>
+
+                <!-- boton para borrar la pijama -->
+                <form th:action="@{/carrito/eliminar}" method="POST" style="margin-left: 15px;">
+                    <input type="hidden" name="id_producto" th:value="${item.id}">
+                    <input type="hidden" name="talla" th:value="${item.talla}">
+                    <button type="submit" title="Eliminar producto" class="btn-eliminar-carrito">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- columna derecha con el resumen de la compra y precio (facturación) -->
+        <div class="producto-card carrito-resumen-box">
+            <h3>Resumen de compra</h3>
+
+            <div class="resumen-fila">
+                <span>Subtotal</span>
+                <span th:text="${'$' + #numbers.formatInteger(subtotal, 0, 'POINT')}">$0</span>
+            </div>
+            <div class="resumen-fila">
+                <span>Envío</span>
+                <span style="color: #256142; font-weight: 600;">Gratis</span>
+            </div>
+            <div class="resumen-fila-total">
+                <span>Total</span>
+                <span th:text="${'$' + #numbers.formatInteger(subtotal, 0, 'POINT')}">$0</span>
+            </div>
+
+            <!-- Formulario para procesar la compra -->
+            <form th:action="@{/carrito/procesar-compra}" method="POST">
+                <div class="form-grupo-pago">
+                    <label>Método de pago:</label>
+                    <select name="id_metodo_pago" required>
+                        <option value="" disabled selected>Selecciona un método</option>
+                        <option value="1">Efectivo / Contra entrega</option>
+                        <option value="2">Transferencia Bancaria</option>
+                        <option value="3">Nequi / DaviPlata</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-carrito">
+                    <i class="fa-solid fa-check"></i> Finalizar Compra
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- si el carro esta sin nada  -->
+    <div th:if="${items == null or #lists.isEmpty(items)}" class="empty-state">
+        <i class="fa-solid fa-cart-shopping empty-icon"></i>
+        <p>Tu carrito de compras está vacío.</p>
+        <a th:href="@{/catalogo}" class="btn-nav-link" style="display: inline-block; margin-top: 20px; background: var(--btn-gradient); color: white; border: none;">Explorar catálogo</a>
+    </div>
+
+</div>
+
+</body>
+</html>

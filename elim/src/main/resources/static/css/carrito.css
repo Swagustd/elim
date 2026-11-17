@@ -1,0 +1,216 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #fff3f6 0%, #ffffff 50%, #fff3f6 100%);
+    --surface: #ffffff;
+    --text-dark: #3a2d32;
+    --muted: #8c737e;
+    --pink-primary: #f3a1b7;
+    --orange-accent: #fcae91;
+    --btn-gradient: linear-gradient(90deg, #f3a1b7 0%, #fcae91 100%);
+    --border-soft: rgba(243, 161, 183, 0.2);
+    --shadow-blur: 0 20px 40px rgba(243, 161, 183, 0.12);
+    --radius-custom: 24px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+/* contenedor principal del carrito */
+.carrito-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.carrito-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #2b1f24;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* 2 columnas */
+.carrito-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .carrito-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* lista de productos en el carrito */
+.carrito-lista-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.carrito-item-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-custom);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--shadow-blur);
+}
+
+.carrito-item-img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 16px;
+    background: #fffcfd;
+    border: 1px solid var(--border-soft);
+}
+
+.carrito-item-info {
+    flex-grow: 1;
+}
+
+.carrito-item-info h4 {
+    font-size: 1.1rem;
+    color: #2b1f24;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.carrito-item-info p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 2px;
+}
+
+.carrito-item-precio {
+    font-weight: 700;
+    color: #2b1f24;
+    font-size: 1.1rem;
+    margin-top: 6px;
+}
+
+/* boton eliminar item */
+.btn-eliminar-item {
+    background: #ffebeb;
+    color: #c94747;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.btn-eliminar-item:hover {
+    background: #fcd5d5;
+}
+
+/* tarjeta de resumen de compra */
+.carrito-resumen-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-custom);
+    padding: 30px;
+    box-shadow: var(--shadow-blur);
+    position: sticky;
+    top: 20px;
+}
+
+.carrito-resumen-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #2b1f24;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-soft);
+    padding-bottom: 12px;
+}
+
+.resumen-linea {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+.resumen-linea.total {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2b1f24;
+    border-top: 1px solid var(--border-soft);
+    padding-top: 14px;
+    margin-top: 14px;
+}
+
+/* Sselector de metodo de pago y finalizar compra */
+.form-pago-grupo {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.form-pago-grupo label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.form-pago-grupo select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    background: #fffcfd;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.form-pago-grupo select:focus {
+    border-color: var(--pink-primary);
+}
+
+.btn-procesar-compra {
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    background: var(--btn-gradient);
+    color: white;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 16px rgba(243, 161, 183, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-procesar-compra:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(182, 95, 120, 0.3);
+}

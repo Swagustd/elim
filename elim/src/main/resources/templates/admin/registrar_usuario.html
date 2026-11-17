@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Usuario — Elim Pijamas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/pedidos.css}">
+    <link rel="stylesheet" th:href="@{/css/formulario_usuario.css}">
+</head>
+<body class="pedidos-body">
+
+<aside class="sidebar">
+    <div>
+        <div class="brand">
+            <h2>Elim</h2>
+            <small>Pijamas</small>
+        </div>
+
+        <p class="nav-label">Principal</p>
+        <ul class="nav-menu">
+            <li>
+                <a th:href="@{/admin/dashboard}">
+                    <i class="fa-solid fa-gauge-high"></i> <span>Panel</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/agregar-pijama}">
+                    <i class="fa-solid fa-plus"></i> <span>Agregar Pijama</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/pedidos}">
+                    <i class="fa-solid fa-truck-fast"></i> <span>Pedidos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/envios}">
+                    <i class="fa-solid fa-shipping-fast"></i> <span>Envíos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/devoluciones}">
+                    <i class="fa-solid fa-rotate-left"></i> <span>Devoluciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/usuarios}" class="active">
+                    <i class="fa-solid fa-user-group"></i> <span>Usuarios</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/reportes}">
+                    <i class="fa-solid fa-file-excel"></i> <span>Reportes</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="logout-section">
+        <a th:href="@{/logout}">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>Cerrar sesión</span>
+        </a>
+    </div>
+</aside>
+
+<div class="dashboard-container">
+    <div class="pedidos-shell">
+        <div class="dash-header">
+            <div>
+                <h1>Registrar Nuevo Usuario</h1>
+                <span>Crea nuevos usuarios o administradores para la plataforma.</span>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/admin/usuarios}" class="btn-dash btn-primary">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a lista
+                </a>
+            </div>
+        </div>
+
+        <div class="alert alert-error" style="margin-bottom:20px;"
+             th:if="${error != null && !#strings.isEmpty(error)}" th:text="${error}"></div>
+
+        <section class="form-container-card">
+            <form th:action="@{/admin/registrar-usuario}" method="POST" class="form-grid" id="userForm">
+
+                <div class="form-group full-width">
+                    <label><i class="fa-solid fa-id-card"></i> Identificación</label>
+                    <div class="doc-group">
+                        <select name="tipo_documento" class="form-control" required>
+                            <option value="CC">CC</option>
+                            <option value="CE">CE</option>
+                            <option value="PPT">PPT</option>
+                        </select>
+                        <input type="text" name="documento" class="form-control" required placeholder="Número de documento (ej: 1012345678)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> Nombres</label>
+                    <input type="text" name="nombres" class="form-control" required placeholder="Nombres completos">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> Apellidos</label>
+                    <input type="text" name="apellidos" class="form-control" required placeholder="Apellidos completos">
+                </div>
+
+                <div class="form-group full-width">
+                    <label><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
+                    <input type="email" name="correo" class="form-control" required placeholder="correo@ejemplo.com">
+                </div>
+
+                <!-- Ccontraseña con el ojito -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••">
+                        <i class="fa-solid fa-eye toggle-password" data-target="password"></i>
+                    </div>
+                </div>
+
+                <!--confirmacion de contraseña -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-shield-halved"></i> Confirmar Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirmPassword" class="form-control" required placeholder="••••••••">
+                        <i class="fa-solid fa-eye toggle-password" data-target="confirmPassword"></i>
+                    </div>
+                    <small id="passwordError" class="error-msg" style="display:none; color:#e53e3e; font-size:0.8rem;">Las contraseñas no coinciden</small>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-phone"></i> Teléfono</label>
+                    <input type="text" name="telefono" class="form-control" placeholder="Ej: 3001234567">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user-shield"></i> Rol Asignado</label>
+                    <select name="id_rol_fk" class="form-control" required>
+                        <option th:each="r : ${roles}" th:value="${r.id_rol}" th:text="${r.nombre_rol}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label><i class="fa-solid fa-location-dot"></i> Dirección de Entrega</label>
+                    <input type="text" name="direccion" class="form-control" placeholder="Calle / Carrera, Barrio, Ciudad">
+                </div>
+
+                <div class="btn-submit-container">
+                    <button type="submit" class="btn-save-user">
+                        <i class="fa-solid fa-user-plus"></i> Guardar Usuario
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+    </div>
+</div>
+
+<script th:src="@{/js/formulario_usuario.js}"></script>
+</body>
+</html>

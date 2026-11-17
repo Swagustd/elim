@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes — Elim Pijamas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/pedidos.css}">
+</head>
+<body class="pedidos-body">
+
+<aside class="sidebar">
+    <div>
+        <div class="brand">
+            <h2>Elim</h2>
+            <small>Pijamas</small>
+        </div>
+
+        <p class="nav-label">Principal</p>
+        <ul class="nav-menu">
+            <li>
+                <a th:href="@{/admin/dashboard}">
+                    <i class="fa-solid fa-gauge-high"></i> <span>Panel</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/agregar-pijama}">
+                    <i class="fa-solid fa-plus"></i> <span>Agregar Pijama</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/pedidos}">
+                    <i class="fa-solid fa-truck-fast"></i> <span>Pedidos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/envios}">
+                    <i class="fa-solid fa-shipping-fast"></i> <span>Envíos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/devoluciones}">
+                    <i class="fa-solid fa-rotate-left"></i> <span>Devoluciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/usuarios}" class="active">
+                    <i class="fa-solid fa-user-group"></i> <span>Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/reportes}">
+                    <i class="fa-solid fa-file-excel"></i> <span>Reportes</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="logout-section">
+        <a th:href="@{/logout}">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>Cerrar sesión</span>
+        </a>
+    </div>
+</aside>
+
+<div class="dashboard-container">
+    <div class="pedidos-shell">
+        <div class="dash-header">
+            <div>
+                <h1>Gestión de usuarios y clientes</h1>
+                <span>Administra la información de los usuarios registrados y asigna sus roles.</span>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/admin/registrar-usuario}" class="btn-dash btn-primary">
+                    <i class="fa-solid fa-user-plus"></i> Registrar Usuario
+                </a>
+                <a th:href="@{/admin/dashboard}" class="btn-dash btn-primary">Volver al panel</a>
+            </div>
+        </div>
+
+        <!-- alerta de respuestas -->
+        <div class="alert alert-success" style="margin-bottom:16px;"
+             th:if="${success != null && !#strings.isEmpty(success)}" th:text="${success}"></div>
+        <div class="alert alert-error" style="margin-bottom:16px;"
+             th:if="${error != null && !#strings.isEmpty(error)}" th:text="${error}"></div>
+
+        <!-- usuarios -->
+        <th:block th:if="${usuarios != null && !usuarios.empty}">
+            <section class="pedido-card" th:each="usr : ${usuarios}">
+                <div class="pedido-head">
+                    <div>
+                        <h3 th:text="${usr.nombres + ' ' + usr.apellidos}">Nombre Apellido</h3>
+                        <div class="pedido-meta" th:text="${usr.tipo_documento + ': ' + usr.documento + ' · ' + usr.correo}">
+                            Documento · Correo
+                        </div>
+                    </div>
+
+                    <span class="badge badge-pagado" th:if="${usr.id_rol_fk == 1}">Administrador</span>
+                    <span class="badge badge-pendiente" th:if="${usr.id_rol_fk == 2}">Cliente</span>
+                </div>
+
+                <div class="pedido-details">
+                    <div class="pedido-detail-box">
+                        <strong>Teléfono</strong>
+                        <span th:text="${usr.telefono != null && !#strings.isEmpty(usr.telefono) ? usr.telefono : 'No registrado'}">Teléfono</span>
+                    </div>
+                    <div class="pedido-detail-box">
+                        <strong>Dirección</strong>
+                        <span th:text="${usr.direccion != null && !#strings.isEmpty(usr.direccion) ? usr.direccion : 'No registrada'}">Dirección</span>
+                    </div>
+                    <div class="pedido-detail-box">
+                        <strong>Rol Actual</strong>
+                        <span th:text="${usr.nombre_rol != null ? usr.nombre_rol : 'Sin rol'}">Rol</span>
+                    </div>
+                </div>
+
+                <!-- fformulario y accionesd -->
+                <form class="form-pedido" th:action="@{/admin/cambiar-rol-usuario}" method="POST">
+                    <input type="hidden" name="documento" th:value="${usr.documento}">
+
+                    <label>
+                        Cambiar rol
+                        <select name="id_rol_fk">
+                            <option th:each="r : ${roles}"
+                                    th:value="${r.id_rol}"
+                                    th:text="${r.nombre_rol}"
+                                    th:selected="${usr.id_rol_fk == r.id_rol}">
+                            </option>
+                        </select>
+                    </label>
+
+                    <button type="submit" class="btn-save">Actualizar rol</button>
+
+                    <a th:href="@{/admin/editar-usuario(documento=${usr.documento})}" class="btn-dash btn-primary" style="text-decoration:none; text-align:center;">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar completo
+                    </a>
+
+                    <!-- eliminar usuario -->
+                    <button type="button" class="btn-danger btn-eliminar-usuario"
+                            th:data-doc="${usr.documento}"
+                            th:data-nombre="${usr.nombres + ' ' + usr.apellidos}">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                    </button>
+                </form>
+            </section>
+        </th:block>
+
+        <!-- si no hay usuarios -->
+        <div class="empty-state" th:unless="${usuarios != null && !usuarios.empty}">
+            <h3>No hay usuarios registrados</h3>
+            <p>Aún no existen cuentas en la base de datos.</p>
+        </div>
+
+    </div>
+</div>
+
+<script th:src="@{/js/usuarios.js}"></script>
+</body>
+</html>

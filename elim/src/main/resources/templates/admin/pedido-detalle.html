@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Pedido - Elim Pijamas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-detalle.css}">
+</head>
+<body>
+
+<div class="container">
+    <div class="header-detalle">
+        <h2><i class="fa-solid fa-file-invoice"></i> Detalle del Pedido <span th:text="${'#' + pedido.idPedido}">#1</span></h2>
+        <span th:text="${pedido.estadoPedido}" style="font-weight: bold; padding: 6px 12px; border-radius: 20px; background: #e2e8f0; font-size: 0.9rem;">Estado</span>
+    </div>
+
+    <div class="info-cliente">
+        <div class="info-item">
+            <span>Documento del Cliente:</span>
+            <strong th:text="${pedido.documentoUsuarioFk}">12345678</strong>
+        </div>
+        <div class="info-item">
+            <span>Fecha del Pedido:</span>
+            <strong th:text="${pedido.fechaPedido}">2026-06-06</strong>
+        </div>
+        <div class="info-item">
+            <span>Método de Pago:</span>
+            <strong th:text="${pedido.idMetodoPagoFk == 1 ? 'Efectivo / Contra entrega' : (pedido.idMetodoPagoFk == 2 ? 'Transferencia' : 'Nequi/DaviPlata')}">Efectivo</strong>
+        </div>
+    </div>
+
+    <h3>Productos Comprados</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>ID Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="detalle : ${detalles}">
+            <td th:text="${'Producto #' + detalle.idProductoFk}">Producto #1</td>
+            <td th:text="${detalle.cantidad}">1</td>
+            <td th:text="${'$' + #numbers.formatInteger(detalle.precioUnitario, 0, 'POINT')}">$0</td>
+            <td th:text="${'$' + #numbers.formatInteger(detalle.subtotal, 0, 'POINT')}">$0</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <strong>Total Pagado: </strong>
+        <span th:text="${'$' + #numbers.formatInteger(pedido.totalPago, 0, 'POINT')}" style="color: #4f46e5; font-weight: bold;">$0</span>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <a th:href="@{/admin/pedidos}" class="btn-volver">
+            <i class="fa-solid fa-arrow-left"></i> Volver a la lista
+        </a>
+        <a th:href="@{/admin/reportes}" class="btn-volver" style="background: #10b981; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-file-excel"></i> Ir a Reportes
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

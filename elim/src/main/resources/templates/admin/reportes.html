@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes del Sistema — Elim Pijamas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/pedidos.css}">
+</head>
+<body class="pedidos-body">
+
+<!-- menu lateral -->
+<aside class="sidebar">
+    <div>
+        <div class="brand">
+            <h2>Elim</h2>
+            <small>Pijamas</small>
+        </div>
+
+        <p class="nav-label">Principal</p>
+        <ul class="nav-menu">
+            <li>
+                <a th:href="@{/admin/dashboard}">
+                    <i class="fa-solid fa-gauge-high"></i> <span>Panel</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/agregar-pijama}">
+                    <i class="fa-solid fa-plus"></i> <span>Agregar Pijama</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/pedidos}">
+                    <i class="fa-solid fa-truck-fast"></i> <span>Pedidos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/envios}">
+                    <i class="fa-solid fa-shipping-fast"></i> <span>Envíos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/devoluciones}">
+                    <i class="fa-solid fa-rotate-left"></i> <span>Devoluciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/usuarios}">
+                    <i class="fa-solid fa-user-group"></i> <span>Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/reportes}" class="active">
+                    <i class="fa-solid fa-file-pdf"></i> <span>Reportes</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="logout-section">
+        <a th:href="@{/logout}">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>Cerrar sesión</span>
+        </a>
+    </div>
+</aside>
+
+<!-- contenedor pricncipal -->
+<div class="dashboard-container">
+    <div class="pedidos-shell">
+        <div class="dash-header">
+            <div>
+                <h1>Generación de Reportes PDF</h1>
+                <span>Filtra y descarga reportes detallados en formato PDF para el control administrativo.</span>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/admin/dashboard}" class="btn-dash btn-primary">Volver al panel</a>
+            </div>
+        </div>
+
+        <!-- reporte de inventario  -->
+        <section class="pedido-card" style="margin-bottom: 25px;">
+            <div class="pedido-head">
+                <div>
+                    <h3><i class="fa-solid fa-boxes-stacked" style="color: var(--pink-primary); margin-right: 8px;"></i> Reporte de Inventario</h3>
+                    <div class="pedido-meta">Descarga el listado de productos, existencias actuales, precios y estados en PDF.</div>
+                </div>
+            </div>
+            <!-- ruta modificada -->
+            <form th:action="@{/admin/reportes/pdf/inventario}" method="GET" class="form-pedido" style="margin-top: 15px;">
+                <label>
+                    Filtrar por Categoría
+                    <select name="id_categoria">
+                        <option value="">Todas las categorías</option>
+                        <option th:each="cat : ${categorias}" th:value="${cat.id_categoria}" th:text="${cat.nombre_categoria}"></option>
+                    </select>
+                </label>
+
+                <label>
+                    Estado del Producto
+                    <select name="estado">
+                        <option value="">Todos los estados</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Agotado">Agotado</option>
+                    </select>
+                </label>
+
+                <button type="submit" class="btn-save" style="margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-file-pdf"></i> Descargar PDF Inventario
+                </button>
+            </form>
+        </section>
+
+        <!-- reporte de pedidos -->
+        <section class="pedido-card" style="margin-bottom: 25px;">
+            <div class="pedido-head">
+                <div>
+                    <h3><i class="fa-solid fa-receipt" style="color: var(--pink-primary); margin-right: 8px;"></i> Reporte de Pedidos</h3>
+                    <div class="pedido-meta">Obtén el registro de transacciones, clientes compradores y totales pagados en PDF.</div>
+                </div>
+            </div>
+            <!-- ruta de pdf -->
+            <form th:action="@{/admin/reportes/pdf/pedidos}" method="GET" class="form-pedido" style="margin-top: 15px;">
+                <label style="grid-column: span 2;">
+                    Estado del Pedido
+                    <select name="estado_pedido">
+                        <option value="">Todos los estados</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Pagado">Pagado</option>
+                        <option value="Enviado">Enviado</option>
+                        <option style="color:red;" value="Entregado">Entregado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </label>
+
+                <button type="submit" class="btn-save" style="margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-file-pdf"></i> Descargar PDF Pedidos
+                </button>
+            </form>
+        </section>
+
+        <!-- reporte de devoluciones -->
+        <section class="pedido-card">
+            <div class="pedido-head">
+                <div>
+                    <h3><i class="fa-solid fa-rotate-left" style="color: var(--pink-primary); margin-right: 8px;"></i> Reporte de Devoluciones</h3>
+                    <div class="pedido-meta">Consulta las solicitudes de devolución registradas por los clientes con sus respectivos motivos en PDF.</div>
+                </div>
+            </div>
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
+                <!-- ruta del pdf -->
+                <a th:href="@{/admin/reportes/pdf/devoluciones}" class="btn-save" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-file-pdf"></i> Descargar PDF Devoluciones
+                </a>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Pijama — Elim Pijamas</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/agregar_pij.css}">
+</head>
+<body class="auth-body">
+
+<aside class="sidebar">
+    <div>
+        <div class="brand">
+            <h2>Elim</h2>
+            <small>Pijamas</small>
+        </div>
+        <p class="nav-label">Principal</p>
+        <ul class="nav-menu">
+            <li><a th:href="@{/admin/dashboard}"><i class="fa-solid fa-gauge-high"></i> <span>Panel</span></a></li>
+            <li><a th:href="@{/admin/agregar-pijama}" class="active"><i class="fa-solid fa-plus"></i> <span>Agregar Pijama</span></a></li>
+            <li><a th:href="@{/admin/pedidos}"><i class="fa-solid fa-truck-fast"></i> <span>Pedidos</span></a></li>
+            <li><a th:href="@{/admin/envios}"><i class="fa-solid fa-shipping-fast"></i> <span>Envíos</span></a></li>
+            <li><a th:href="@{/admin/usuarios}"><i class="fa-solid fa-user-group"></i> <span>Clientes</span></a></li>
+        </ul>
+    </div>
+    <div class="logout-section">
+        <a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> <span>Cerrar sesión</span></a>
+    </div>
+</aside>
+
+<div class="dashboard-container">
+    <main class="auth-main" style="padding: 0;">
+        <div class="auth-card">
+            <h1>Agregar pijama</h1>
+            <p class="subtitulo">Registra un nuevo producto en el catálogo de Elim Pijamas.</p>
+
+            <div class="alerta error" th:if="${error != null && !#strings.isEmpty(error)}" th:text="${error}"></div>
+            <div class="alerta" style="color:#2f6b4f; background:#eefbee; border-color:#2f6b4f;" th:if="${exito != null && !#strings.isEmpty(exito)}" th:text="${exito}"></div>
+
+            <form th:action="@{/admin/agregar-pijama}" method="POST" enctype="multipart/form-data" class="auth-form" id="formPijama">
+                <div class="campo">
+                    <label for="nombre_producto">Nombre del producto</label>
+                    <input type="text" id="nombre_producto" name="nombre_producto" required>
+                </div>
+
+                <div class="campo">
+                    <label for="descripcion">Descripción</label>
+                    <input type="text" id="descripcion" name="descripcion">
+                </div>
+
+                <div class="campo">
+                    <label for="precio">Precio</label>
+                    <input type="number" id="precio" name="precio" step="0.01" min="0" required>
+                </div>
+
+                <div class="campo">
+                    <label for="id_categoria_fk">Categoría</label>
+                    <select id="id_categoria_fk" name="id_categoria_fk" required>
+                        <option value="">Seleccione una categoría...</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id_categoria}"
+                                th:data-nombre="${cat.nombre_categoria}"
+                                th:text="${cat.nombre_categoria}">Categoría</option>
+                    </select>
+                </div>
+
+                <!-- stock por tallas -->
+                <div class="seccion-tallas" id="seccion_tallas" style="display: none;">
+                    <h3 id="titulo_tallas">Stock por Tallas</h3>
+
+                    <!-- talla de adultos -->
+                    <div class="grid-tallas grupo-tallas" id="grupo_adultos">
+                        <div class="item-talla"><label for="talla_xs">XS</label><input type="number" class="input-talla" id="talla_xs" name="tallas[XS]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_s">S</label><input type="number" class="input-talla" id="talla_s" name="tallas[S]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_m">M</label><input type="number" class="input-talla" id="talla_m" name="tallas[M]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_l">L</label><input type="number" class="input-talla" id="talla_l" name="tallas[L]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_xl">XL</label><input type="number" class="input-talla" id="talla_xl" name="tallas[XL]" min="0" value="0"></div>
+                    </div>
+
+                    <!-- talla de niños -->
+                    <div class="grid-tallas grupo-tallas" id="grupo_ninos" style="display: none;">
+                        <div class="item-talla"><label for="talla_8">Talla 8</label><input type="number" class="input-talla" id="talla_8" name="tallas[8]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_10">Talla 10</label><input type="number" class="input-talla" id="talla_10" name="tallas[10]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_12">Talla 12</label><input type="number" class="input-talla" id="talla_12" name="tallas[12]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_14">Talla 14</label><input type="number" class="input-talla" id="talla_14" name="tallas[14]" min="0" value="0"></div>
+                    </div>
+
+                    <!-- talla de bebes-->
+                    <div class="grid-tallas grupo-tallas" id="grupo_bebes" style="display: none;">
+                        <div class="item-talla"><label for="talla_rn">Recién nacido</label><input type="number" class="input-talla" id="talla_rn" name="tallas[Recién nacido]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_0_3">0-3 meses</label><input type="number" class="input-talla" id="talla_0_3" name="tallas[0-3 meses]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_3_6">3-6 meses</label><input type="number" class="input-talla" id="talla_3_6" name="tallas[3-6 meses]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_9_12">9-12 meses</label><input type="number" class="input-talla" id="talla_9_12" name="tallas[9-12 meses]" min="0" value="0"></div>
+                        <div class="item-talla"><label for="talla_18_24">18-24 meses</label><input type="number" class="input-talla" id="talla_18_24" name="tallas[18-24 meses]" min="0" value="0"></div>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="stock">Stock Total (calculado automáticamente)</label>
+                    <input type="number" id="stock" name="stock" min="0" value="0" readonly class="input-readonly">
+                </div>
+
+                <div class="campo">
+                    <label for="imagen">Imagen del producto</label>
+                    <input type="file" id="imagen" name="imagen" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif">
+                </div>
+
+                <div class="campo">
+                    <label for="estado">Estado</label>
+                    <select id="estado" name="estado">
+                        <option value="Disponible">Disponible</option>
+                        <option value="Agotado">Agotado</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-auth">
+                    <i class="fa-solid fa-plus"></i> Guardar producto
+                </button>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/agregar_pijama.js}"></script>
+</body>
+</html>
